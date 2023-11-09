@@ -3,6 +3,8 @@ suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
 values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
 playing = True
+play_again = False
+total_chips = 0
 
 class Card:
     def __init__(self,suit,rank):
@@ -152,7 +154,10 @@ while True:
     dealer_hand.add_card(deck.deal())
 
     #Set up the Player chips
-    player_chips = Chips()
+    if play_again:
+        player_chips = Chips(total_chips)
+    else:
+        player_chips = Chips()
 
     #Prompt the Player for their bet
     take_bet(player_chips)
@@ -191,13 +196,24 @@ while True:
 
     #Inform Player of their chips total
     print('\n Player total chips are at: {}'.format(player_chips.total))
-    #Ask to play again
-    new_game = input('Would you like to play another hand? y/n')
 
-    if new_game[0].lower() == 'y':
-        playing = True
-        continue
+    if player_chips.total > 0:
+        #Ask to play again
+        new_game = input('Would you like to play again (Y/N)?')
+        while new_game.upper() != 'Y' and new_game.upper() != 'N' and new_game.upper() != 'YES' and new_game.upper() != 'NO':
+            new_game = input('Would you like to play again (Y/N)?')
+            new_game = new_game.upper()
+        if new_game.upper() == 'Y' or new_game.upper() == 'YES':
+            playing = True
+            play_again = True
+            total_chips = player_chips.total
+            continue
+        else:
+            play_again = False
+            total_chips = 0
+            print('Thank you for playing!')
+            break
     else:
-        print('Thank you for playing!')
+        print("Sorry, you don't have enough chips to play.")
         break
 
